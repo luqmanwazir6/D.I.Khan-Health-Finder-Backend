@@ -1,0 +1,343 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "D.I. Khan Health Finder API",
+    "description": "Healthcare discovery and management platform for Dera Ismail Khan, Pakistan. Follows strict JSON camelCase schema contracts.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "/api/v1",
+      "description": "Primary API v1 Server"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "email": { "type": "string" },
+          "phone": { "type": "string" },
+          "role": { "type": "string", "enum": ["patient", "doctor", "admin"] },
+          "avatar": { "type": "string" },
+          "isActive": { "type": "boolean" },
+          "createdAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "Doctor": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "userId": { "type": "string" },
+          "name": { "type": "string" },
+          "slug": { "type": "string" },
+          "specialty": { "type": "string" },
+          "qualifications": { "type": "array", "items": { "type": "string" } },
+          "experienceYears": { "type": "number" },
+          "gender": { "type": "string", "enum": ["male", "female"] },
+          "bio": { "type": "string" },
+          "languages": { "type": "array", "items": { "type": "string" } },
+          "consultationFee": { "type": "number" },
+          "photo": { "type": "string" },
+          "phone": { "type": "string" },
+          "whatsapp": { "type": "string" },
+          "email": { "type": "string" },
+          "clinicName": { "type": "string" },
+          "address": { "type": "string" },
+          "area": { "type": "string" },
+          "city": { "type": "string" },
+          "coordinates": {
+            "type": "object",
+            "properties": {
+              "lat": { "type": "number" },
+              "lng": { "type": "number" }
+            }
+          },
+          "availability": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "day": { "type": "string" },
+                "startTime": { "type": "string" },
+                "endTime": { "type": "string" },
+                "isAvailable": { "type": "boolean" }
+              }
+            }
+          },
+          "slotDurationMinutes": { "type": "number" },
+          "ratingAverage": { "type": "number" },
+          "ratingCount": { "type": "number" },
+          "isVerified": { "type": "boolean" },
+          "approvalStatus": { "type": "string", "enum": ["pending", "approved", "rejected"] },
+          "isActive": { "type": "boolean" },
+          "createdAt": { "type": "string" },
+          "updatedAt": { "type": "string" }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean", "example": false },
+          "message": { "type": "string" },
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": { "type": "string" },
+              "details": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "field": { "type": "string" },
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "System Health Check",
+        "responses": {
+          "200": { "description": "System is healthy" }
+        }
+      }
+    },
+    "/auth/signup": {
+      "post": {
+        "summary": "Register a new user (patient or doctor)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "email", "phone", "password", "role"],
+                "properties": {
+                  "name": { "type": "string" },
+                  "email": { "type": "string" },
+                  "phone": { "type": "string" },
+                  "password": { "type": "string" },
+                  "role": { "type": "string", "enum": ["patient", "doctor"] },
+                  "specialty": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "User created" },
+          "422": { "description": "Validation error" },
+          "409": { "description": "Email conflict" }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "Authenticate user and issue JWT",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                  "email": { "type": "string" },
+                  "password": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Login successful" },
+          "401": { "description": "Invalid credentials" }
+        }
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "summary": "Get authenticated user profile",
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": { "description": "User profile" },
+          "401": { "description": "Unauthorized" }
+        }
+      },
+      "patch": {
+        "summary": "Update authenticated user profile",
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Updated profile" }
+        }
+      }
+    },
+    "/auth/change-password": {
+      "patch": {
+        "summary": "Change password",
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Password updated" }
+        }
+      }
+    },
+    "/doctors": {
+      "get": {
+        "summary": "List doctors with filtering, search, and pagination",
+        "parameters": [
+          { "name": "page", "in": "query", "schema": { "type": "integer" } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer" } },
+          { "name": "q", "in": "query", "schema": { "type": "string" } },
+          { "name": "specialty", "in": "query", "schema": { "type": "string" } },
+          { "name": "area", "in": "query", "schema": { "type": "string" } },
+          { "name": "minFee", "in": "query", "schema": { "type": "number" } },
+          { "name": "maxFee", "in": "query", "schema": { "type": "number" } },
+          { "name": "minRating", "in": "query", "schema": { "type": "number" } }
+        ],
+        "responses": {
+          "200": { "description": "List of doctors" }
+        }
+      }
+    },
+    "/doctors/me": {
+      "get": {
+        "summary": "Get authenticated doctor's profile",
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Doctor profile" }
+        }
+      }
+    },
+    "/doctors/{id}": {
+      "get": {
+        "summary": "Get doctor by ID or slug",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Doctor details" },
+          "404": { "description": "Doctor not found" }
+        }
+      }
+    },
+    "/doctors/{id}/slots": {
+      "get": {
+        "summary": "Get doctor booking slots for a date",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "date", "in": "query", "required": true, "schema": { "type": "string", "example": "2026-10-15" } }
+        ],
+        "responses": {
+          "200": { "description": "Available slots" }
+        }
+      }
+    },
+    "/emergency": {
+      "get": {
+        "summary": "Get all 24/7 and emergency medical facilities",
+        "responses": {
+          "200": { "description": "Emergency facilities dictionary" }
+        }
+      }
+    },
+    "/meta/specialties": {
+      "get": {
+        "summary": "Get medical specialties with doctor counts",
+        "responses": {
+          "200": { "description": "List of specialties" }
+        }
+      }
+    },
+    "/meta/areas": {
+      "get": {
+        "summary": "Get geographic areas list",
+        "responses": {
+          "200": { "description": "List of areas" }
+        }
+      }
+    },
+    "/search": {
+      "get": {
+        "summary": "Universal multi-entity search",
+        "parameters": [
+          { "name": "q", "in": "query", "required": true, "schema": { "type": "string" } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 5 } }
+        ],
+        "responses": {
+          "200": { "description": "Grouped search results" }
+        }
+      }
+    },
+    "/appointments": {
+      "post": {
+        "summary": "Book a new doctor appointment (patient only)",
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["doctorId", "date", "startTime"],
+                "properties": {
+                  "doctorId": { "type": "string" },
+                  "date": { "type": "string", "example": "2026-10-15" },
+                  "startTime": { "type": "string", "example": "10:00" },
+                  "reason": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Appointment booked" },
+          "409": { "description": "Slot already taken (anti-collision)" }
+        }
+      }
+    },
+    "/reviews": {
+      "get": {
+        "summary": "List reviews for a target entity",
+        "parameters": [
+          { "name": "targetType", "in": "query", "required": true, "schema": { "type": "string" } },
+          { "name": "targetId", "in": "query", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Reviews list" }
+        }
+      },
+      "post": {
+        "summary": "Leave a review (patient only)",
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "201": { "description": "Review created" }
+        }
+      }
+    },
+    "/admin/stats": {
+      "get": {
+        "summary": "System statistics overview",
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Platform statistics" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,100 @@
+/**
+ * D.I. Khan Health Finder - Global Constants & Enums
+ */
+
+export const HTTP_STATUS = {
+  OK: 200,
+  CREATED: 201,
+  NO_CONTENT: 204,
+  BAD_REQUEST: 400,
+  UNAUTHORIZED: 401,
+  FORBIDDEN: 403,
+  NOT_FOUND: 404,
+  CONFLICT: 409,
+  VALIDATION_ERROR: 422,
+  TOO_MANY_REQUESTS: 429,
+  INTERNAL_SERVER_ERROR: 500
+};
+
+export const ERROR_CODES = {
+  BAD_REQUEST: 'BAD_REQUEST',
+  UNAUTHORIZED: 'UNAUTHORIZED',
+  FORBIDDEN: 'FORBIDDEN',
+  NOT_FOUND: 'NOT_FOUND',
+  CONFLICT: 'CONFLICT',
+  VALIDATION_ERROR: 'VALIDATION_ERROR',
+  TOO_MANY_REQUESTS: 'TOO_MANY_REQUESTS',
+  INTERNAL_SERVER_ERROR: 'INTERNAL_SERVER_ERROR'
+};
+
+export const ROLES = {
+  PATIENT: 'patient',
+  DOCTOR: 'doctor',
+  ADMIN: 'admin'
+};
+
+export const ROLE_LIST = [ROLES.PATIENT, ROLES.DOCTOR, ROLES.ADMIN];
+
+export const APPOINTMENT_STATUS = {
+  PENDING: 'pending',
+  CONFIRMED: 'confirmed',
+  COMPLETED: 'completed',
+  CANCELLED: 'cancelled',
+  NO_SHOW: 'no_show'
+};
+
+export const APPOINTMENT_STATUS_LIST = [
+  APPOINTMENT_STATUS.PENDING,
+  APPOINTMENT_STATUS.CONFIRMED,
+  APPOINTMENT_STATUS.COMPLETED,
+  APPOINTMENT_STATUS.CANCELLED,
+  APPOINTMENT_STATUS.NO_SHOW
+];
+
+export const DOCTOR_APPROVAL_STATUS = {
+  PENDING: 'pending',
+  APPROVED: 'approved',
+  REJECTED: 'rejected'
+};
+
+export const DOCTOR_APPROVAL_STATUS_LIST = [
+  DOCTOR_APPROVAL_STATUS.PENDING,
+  DOCTOR_APPROVAL_STATUS.APPROVED,
+  DOCTOR_APPROVAL_STATUS.REJECTED
+];
+
+export const TARGET_TYPES = {
+  DOCTOR: 'doctor',
+  CLINIC: 'clinic',
+  HOSPITAL: 'hospital',
+  PHARMACY: 'pharmacy',
+  LABORATORY: 'laboratory'
+};
+
+export const TARGET_TYPE_LIST = [
+  TARGET_TYPES.DOCTOR,
+  TARGET_TYPES.CLINIC,
+  TARGET_TYPES.HOSPITAL,
+  TARGET_TYPES.PHARMACY,
+  TARGET_TYPES.LABORATORY
+];
+
+export const DAYS_OF_WEEK = [
+  'monday',
+  'tuesday',
+  'wednesday',
+  'thursday',
+  'friday',
+  'saturday',
+  'sunday'
+];
+
+export const GENDERS = ['male', 'female'];
+
+export const DEFAULT_CITY = 'Dera Ismail Khan';
+
+export const PAGINATION = {
+  DEFAULT_PAGE: 1,
+  DEFAULT_LIMIT: 10,
+  MAX_LIMIT: 50
+};
